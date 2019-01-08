@@ -62,13 +62,16 @@ class TableauDownloader:
     
     def save_file(self,files_url,files_name):
         for i in range(len(files_name)):
-            print(files_url[i])
-            r = requests.get(files_url[i], stream = True) 
-            with open(files_name[i],"wb") as file: 
-                for chunk in r.iter_content(chunk_size=1000000): 
-                # writing one chunk at a time to pdf file 
-                    if chunk: 
-                        file.write(chunk)
+        	if(os.path.isfile(files_name[i])):
+        	    continue
+        	else:
+	            print(files_url[i])
+	            r = requests.get(files_url[i], stream = True) 
+	            with open(files_name[i],"wb") as file: 
+	                for chunk in r.iter_content(chunk_size=1000000): 
+	                # writing one chunk at a time to pdf file 
+	                    if chunk: 
+	                        file.write(chunk)
               
             
                 
@@ -79,9 +82,12 @@ class TableauDownloader:
         downloadable_items_links['video'] = video_link
         other_links = soup.find_all('div',class_='gallery-grid__item')
         for i in range(len(other_links)):
-            key = other_links[i].h5.string
-            value = other_links[i].a['href']
-            downloadable_items_links[key] = value
+            try:
+                key = other_links[i].h5.string
+                value = other_links[i].a['href']
+                downloadable_items_links[key] = value
+            except:
+            	continue
             
         return downloadable_items_links
             
